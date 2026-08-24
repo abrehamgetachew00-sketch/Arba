@@ -1,0 +1,24 @@
+version: "3.9"
+services:
+  frontend:
+    image: nginx:alpine
+    volumes:
+      - ./frontend:/usr/share/nginx/html
+    ports: ["3000:80"]
+    depends_on: [python-gateway]
+
+  python-gateway:
+    build: ./backend-python
+    ports: ["8000:8000"]
+    environment:
+      - CPP_SERVICE_URL=http://cpp-service:8080
+      - JAVA_SERVICE_URL=http://java-service:8081
+    depends_on: [cpp-service, java-service]
+
+  cpp-service:
+    build: ./service-cpp
+    ports: ["8080:8080"]
+
+  java-service:
+    build: ./service-java
+    ports: ["8081:8081"]
